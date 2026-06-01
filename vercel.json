@@ -1,9 +1,10 @@
 {
   "version": 2,
   "env": {
-    "TRACKING_ENABLED": "@tracking_enabled",
-    "ANALYTICS_ENDPOINT": "@analytics_endpoint",
-    "USER_SESSION_TIMEOUT": "1800000"
+    "TRACKING_ENABLED": "true",
+    "ANALYTICS_ENDPOINT": "https://api.example.com/analytics",
+    "USER_SESSION_TIMEOUT": "1800000",
+    "DEBUG_MODE": "false"
   },
   "functions": {
     "api/health.js": {
