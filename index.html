@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathe Trainer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Mathe Trainer</h1>
+
+    <form id="trainer-form" autocomplete="off">
+      <label for="max">Maximales Ergebnis</label>
+      <input
+        type="number"
+        id="max"
+        value="30"
+        min="2"
+        step="1"
+        inputmode="numeric"
+      />
+
+      <div id="frage" class="frage" aria-live="polite">Lade…</div>
+
+      <label for="antwort">Antwort</label>
+      <input
+        type="number"
+        id="antwort"
+        placeholder="Antwort eingeben"
+        inputmode="numeric"
+        autocomplete="off"
+        required
+      />
+
+      <button type="submit">Prüfen</button>
+    </form>
+
+    <section class="stats">
+      <div id="stats">Richtig: 0 | Falsch: 0</div>
+
+      <div class="bar-wrapper" aria-label="Trefferquote">
+        <div id="bar" class="bar"></div>
+      </div>
+
+      <div id="quote">Trefferquote: 0%</div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
