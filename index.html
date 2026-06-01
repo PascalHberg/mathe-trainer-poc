@@ -47,6 +47,150 @@
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    // Mathe Trainer Logic - INLINE VERSION
+    class MathTrainer {
+      constructor() {
+        this.max = 30;
+        this.correct = 0;
+        this.wrong = 0;
+        this.currentQuestion = null;
+        
+        // Get all elements
+        this.elements = {
+          maxInput: document.getElementById('max'),
+          frage: document.getElementById('frage'),
+          antwort: document.getElementById('antwort'),
+          form: document.getElementById('trainer-form'),
+          stats: document.getElementById('stats'),
+          bar: document.getElementById('bar'),
+          quote: document.getElementById('quote')
+        };
+
+        // Check if all elements exist
+        const allElementsExist = Object.values(this.elements).every(el => el !== null);
+        if (!allElementsExist) {
+          console.error('❌ Some DOM elements not found!', this.elements);
+          return;
+        }
+
+        console.log('✅ All DOM elements found, initializing...');
+        this.init();
+      }
+
+      init() {
+        try {
+          // Generate first question
+          this.generateQuestion();
+
+          // Max input change event
+          this.elements.maxInput.addEventListener('change', () => {
+            this.max = parseInt(this.elements.maxInput.value) || 30;
+            console.log('Max changed to:', this.max);
+            this.generateQuestion();
+          });
+
+          // Form submit event
+          this.elements.form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.checkAnswer();
+          });
+
+          // Focus answer input
+          this.elements.antwort.focus();
+          
+          console.log('✅ MathTrainer fully initialized and ready!');
+        } catch (error) {
+          console.error('❌ Init error:', error);
+        }
+      }
+
+      generateQuestion() {
+        try {
+          // Random operation
+          const operations = ['+', '-', '*'];
+          const operation = operations[Math.floor(Math.random() * operations.length)];
+
+          let num1, num2;
+          
+          if (operation === '+') {
+            num1 = Math.floor(Math.random() * this.max);
+            num2 = Math.floor(Math.random() * this.max);
+          } else if (operation === '-') {
+            num1 = Math.floor(Math.random() * this.max);
+            num2 = Math.floor(Math.random() * (num1 + 1));
+          } else if (operation === '*') {
+            const sqrtMax = Math.max(2, Math.ceil(Math.sqrt(this.max)));
+            num1 = Math.floor(Math.random() * sqrtMax) + 1;
+            num2 = Math.floor(Math.random() * sqrtMax) + 1;
+          }
+
+          // Calculate answer
+          let answer;
+          switch (operation) {
+            case '+':
+              answer = num1 + num2;
+              break;
+            case '-':
+              answer = num1 - num2;
+              break;
+            case '*':
+              answer = num1 * num2;
+              break;
+          }
+
+          // Store question
+          this.currentQuestion = { num1, num2, operation, answer };
+
+          // Display
+          this.elements.frage.textContent = `${num1} ${operation} ${num2}`;
+          this.elements.antwort.value = '';
+          this.elements.antwort.focus();
+          
+          console.log(`📝 New question: ${num1} ${operation} ${num2} = ${answer}`);
+        } catch (error) {
+          console.error('❌ Generate question error:', error);
+        }
+      }
+
+      checkAnswer() {
+        try {
+          const userAnswer = parseInt(this.elements.antwort.value);
+          const correctAnswer = this.currentQuestion.answer;
+
+          if (isNaN(userAnswer)) {
+            alert('Bitte eine gültige Nummer eingeben!');
+            return;
+          }
+
+          if (userAnswer === correctAnswer) {
+            this.correct++;
+            console.log('✅ Correct!');
+          } else {
+            this.wrong++;
+            console.log('❌ Wrong! Correct answer was:', correctAnswer);
+          }
+
+          this.updateStats();
+          this.generateQuestion();
+        } catch (error) {
+          console.error('❌ Check answer error:', error);
+        }
+      }
+
+      updateStats() {
+        const total = this.correct + this.wrong;
+        const percentage = total > 0 ? Math.round((this.correct / total) * 100) : 0;
+
+        this.elements.stats.textContent = `Richtig: ${this.correct} | Falsch: ${this.wrong}`;
+        this.elements.bar.style.width = `${percentage}%`;
+        this.elements.quote.textContent = `Trefferquote: ${percentage}%`;
+      }
+    }
+
+    // Initialize when ready
+    console.log('📚 Script loaded, initializing MathTrainer...');
+    window.mathTrainer = new MathTrainer();
+  </script>
 </body>
 </html>
