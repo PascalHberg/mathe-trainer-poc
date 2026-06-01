@@ -1,0 +1,257 @@
+---
+# Deployment Configuration for Mathe Trainer POC
+# This YAML file defines deployment targets, monitoring, and performance settings
+
+version: '1.0'
+name: mathe-trainer-poc
+description: Math Training Application - Proof of Concept
+
+# Deployment Targets
+deployment:
+  production:
+    platform: vercel
+    domain: mathe-trainer.vercel.app
+    environment: production
+    auto_deploy: true
+    branch: main
+    
+  staging:
+    platform: vercel
+    domain: mathe-trainer-staging.vercel.app
+    environment: staging
+    auto_deploy: true
+    branch: develop
+
+  development:
+    platform: localhost
+    port: 3000
+    environment: development
+
+# Environment Configuration
+environment:
+  production:
+    TRACKING_ENABLED: true
+    ANALYTICS_ENDPOINT: https://api.mathe-trainer.com/analytics
+    USER_SESSION_TIMEOUT: 1800000
+    DEBUG_MODE: false
+    
+  staging:
+    TRACKING_ENABLED: true
+    ANALYTICS_ENDPOINT: https://staging-api.mathe-trainer.com/analytics
+    USER_SESSION_TIMEOUT: 1800000
+    DEBUG_MODE: true
+    
+  development:
+    TRACKING_ENABLED: true
+    ANALYTICS_ENDPOINT: http://localhost:3001/analytics
+    USER_SESSION_TIMEOUT: 1800000
+    DEBUG_MODE: true
+
+# Performance Targets
+performance:
+  targets:
+    # Core Web Vitals
+    LCP: 2500  # Largest Contentful Paint (ms)
+    FID: 100   # First Input Delay (ms)
+    CLS: 0.1   # Cumulative Layout Shift
+    
+    # Additional Metrics
+    TTFB: 600  # Time to First Byte (ms)
+    FCP: 1800  # First Contentful Paint (ms)
+    
+  # Bundle Size Targets
+  bundleSize:
+    html: 1500  # bytes
+    css: 1200   # bytes
+    js: 5000    # bytes (including tracking)
+
+# Monitoring & Analytics
+monitoring:
+  enabled: true
+  
+  metrics:
+    - page_views
+    - user_sessions
+    - active_users
+    - error_rate
+    - performance_metrics
+    
+  uptime:
+    target: 99.9  # percent
+    check_interval: 60  # seconds
+    check_url: /api/health
+
+# User Tracking Configuration
+tracking:
+  enabled: true
+  
+  session:
+    timeout: 1800000  # 30 minutes (ms)
+    heartbeat_interval: 30000  # 30 seconds (ms)
+    idle_timeout: 600000  # 10 minutes (ms)
+    
+  events:
+    - user_login
+    - user_logout
+    - question_answered
+    - score_updated
+    - session_created
+    - session_ended
+    
+  storage:
+    type: serverless
+    retention: 90  # days
+    
+  privacy:
+    anonymize_ip: true
+    gdpr_compliant: true
+    cookie_consent: required
+
+# API Configuration
+api:
+  endpoints:
+    - path: /api/health
+      method: GET
+      description: Health check endpoint
+      
+    - path: /api/track-user
+      method: GET, POST
+      description: User tracking and session management
+      auth_required: false
+      
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+    
+  timeout: 10000  # milliseconds
+
+# Security Configuration
+security:
+  headers:
+    X-Frame-Options: SAMEORIGIN
+    X-Content-Type-Options: nosniff
+    Referrer-Policy: strict-origin-when-cross-origin
+    Permissions-Policy: geolocation=(), microphone=(), camera=()
+    
+  https: true
+  hsts: max-age=31536000
+  
+  csp: "default-src 'self'"
+
+# Build Configuration
+build:
+  cache:
+    enabled: true
+    ttl: 3600  # seconds
+    
+  optimization:
+    minify: true
+    gzip: true
+    brotli: false
+    
+  output:
+    directory: dist
+    format: static
+
+# Caching Configuration
+caching:
+  static:
+    ttl: 86400  # 24 hours
+    
+  api:
+    ttl: 0  # No cache for API responses
+    
+  html:
+    ttl: 3600  # 1 hour
+
+# Logging Configuration
+logging:
+  level: info
+  
+  destinations:
+    - console
+    - file
+    - cloud_service
+    
+  retention_days: 30
+
+# Automated Tests
+testing:
+  enabled: true
+  
+  suites:
+    - unit
+    - integration
+    - performance
+    - accessibility
+    
+  coverage_threshold: 80
+
+# Database Configuration (Future)
+database:
+  enabled: false
+  # To be configured when backend is needed
+  provider: postgresql
+  # connection_string: ${DB_CONNECTION_STRING}
+
+# Notifications
+notifications:
+  errors:
+    enabled: true
+    channels:
+      - email
+      - slack
+      
+  deployments:
+    enabled: true
+    channels:
+      - slack
+      - github
+      
+  performance_alerts:
+    enabled: true
+    threshold: 0.15  # 15% degradation
+    channels:
+      - slack
+
+# Version Management
+versioning:
+  scheme: semver
+  auto_increment: false
+  changelog: required
+
+# Maintenance
+maintenance:
+  enabled: false
+  schedule: "0 2 * * 0"  # Weekly at 2 AM Sunday
+  
+  backup:
+    enabled: true
+    frequency: daily
+
+# Health Checks
+health_checks:
+  - name: api_health
+    url: /api/health
+    interval: 300  # seconds
+    timeout: 10000  # milliseconds
+    
+  - name: page_load
+    url: /
+    interval: 600
+    timeout: 15000
+
+# SLA Configuration
+sla:
+  uptime_percentage: 99.9
+  response_time_p95: 1000  # milliseconds
+  response_time_p99: 2000  # milliseconds
+
+metadata:
+  created: '2026-06-01'
+  last_updated: '2026-06-01'
+  created_by: CodeReview
+  tags:
+    - poc
+    - frontend
+    - math-trainer
